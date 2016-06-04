@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
+        maven { url 'http://192.168.0.3:8081/artifactory/plugins-release' }
         mavenCentral()
     }
     dependencies {
@@ -14,9 +15,8 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'kotlin'
 
-sourceCompatibility = 1.5
-
 repositories {
+    maven { url 'http://192.168.0.3:8081/artifactory/plugins-release' }
     mavenCentral()
 }
 
