@@ -6,7 +6,7 @@ import org.w3c.dom.NodeList
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
-class XmlParser(val filename: String) {
+class XmlParser(val filename: String, val packageName: String) {
     val root: Element by lazy {
         val xmlFile = File(filename)
         val dbFactory = DocumentBuilderFactory.newInstance()
@@ -30,8 +30,8 @@ class XmlParser(val filename: String) {
                 is Element -> {
                     when (item.nodeName) {
                         "xsd:complexType" -> {
-                            val complexType = ComplexType(xmlns, xsdns, item)
-                            generatedClass.append("${complexType.className}, ${complexType.comment}\n${complexType.definition}")
+                            val complexType = ComplexType(packageName, xmlns, xsdns, item)
+                            generatedClass.append("${complexType.className}, $complexType")
                         }
                         "xsd:simpleType" -> generatedClass.append(processSimpleType(item))
                         else -> generatedClass.append("${item.nodeName}\n")

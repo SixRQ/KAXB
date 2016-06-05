@@ -3,7 +3,7 @@ package com.sixrq.kaxb
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 
-class ComplexType(val xmlns: String, val xsdns: String, val item: Element) {
+class ComplexType(val packageName: String, val xmlns: String, val xsdns: String, val item: Element) {
     val className: String by lazy { extractClassName(item.attributes.item(0).nodeValue) }
 
     val comment: String by lazy {
@@ -87,5 +87,9 @@ class ComplexType(val xmlns: String, val xsdns: String, val item: Element) {
             }
         }
         return " * ${comment.toString().replace("\n", "\n * ")}"
+    }
+
+    override fun toString(): String {
+        return "package $packageName\n\n$comment\n$definition"
     }
 }
