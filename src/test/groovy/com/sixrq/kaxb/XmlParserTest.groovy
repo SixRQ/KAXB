@@ -10,10 +10,9 @@ class XmlParserTest extends Specification {
         def parser = new XmlParser(this.getClass().getResource("/GpxExtensionsv3.xsd").toURI().getSchemeSpecificPart())
 
         when: "I parse the document"
-        Document doc = parser.getDocumentFromFile()
+        parser.readAndDisplayDocument()
 
         then: "I can read the file"
-        parser.readAndDisplayDocument(doc)
         true
     }
 }
