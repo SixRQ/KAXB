@@ -63,7 +63,30 @@ class ComplexType(val packageName: String, val xmlns: String, val xsdns: String,
         definition.append(" * &lt;complexType name=\"${item.attributes.item(0).nodeValue}\">\n")
         definition.append(" *   &lt;complexContent>\n")
         definition.append(" *     &lt;restriction base=\"{${xsdns}}anyType\">\n")
-        // TODO Add Schema comments for sequence etc.
+        for (nodeIndex in 0..(item.childNodes.length-1)) {
+            val node = item.childNodes.item(nodeIndex)
+            when (node.nodeName) {
+                "xsd:sequence" -> {
+                    definition.append(" *       &lt;${node.nodeName.replace("xsd:", "")}>\n")
+                    for(childIndex in 0..(node.childNodes.length-1)) {
+                        val childNode = node.childNodes.item(childIndex)
+                        when (childNode) {
+                            is Element -> {
+                                definition.append(" *         &lt;${childNode.nodeName.replace("xsd:", "")}")
+                                definition.append(" name=\"${childNode.getAttribute("name")}\"")
+                                definition.append(" type=\"{${xmlns}}${childNode.getAttribute("type")}\"")
+                                if (childNode.getAttribute("maxOccurs") != null)
+                                    definition.append(" maxOccurs=\"${childNode.getAttribute("maxOccurs")}\"")
+                                if (childNode.getAttribute("maxOccurs") != null)
+                                    definition.append(" minOccurs=\"${childNode.getAttribute("minOccurs")}\"")
+                                definition.append("/>\n")
+                            }
+                        }
+                    }
+                    definition.append(" *       &lt;/${node.nodeName.replace("xsd:", "")}>\n")
+                }
+            }
+        }
         definition.append(" *     &lt;/restriction>\n")
         definition.append(" *   &lt;/complexContent>\n")
         definition.append(" * &lt;/complexType>\n")
