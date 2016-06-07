@@ -2,8 +2,9 @@ package com.sixrq.kaxb
 
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import java.util.*
 
-class ComplexType(val packageName: String, val xmlns: String, val xsdns: String, val item: Element) {
+class ComplexType(val packageName: String, val xmlns: String, val xsdns: String, val simpleTypeMap: HashMap<String, String>, val item: Element) {
     val className: String by lazy { extractClassName(item.attributes.item(0).nodeValue) }
 
     val comment: String by lazy {
@@ -26,36 +27,6 @@ class ComplexType(val packageName: String, val xmlns: String, val xsdns: String,
         classDefinition.toString()
     }
 
-    private fun processClassContent(): String {
-        val content = StringBuilder()
-        val elementsByTagName = item.getElementsByTagName("xsd:sequence")
-        if (elementsByTagName.item(0) != null) {
-            for (item in arrayListOf(elementsByTagName.item(0).childNodes)) {
-                if (item is Element) {
-                    when (item.nodeName) {
-                        "xsd:element" -> {
-                            val varName = item.attributes.getNamedItem("name").nodeValue.decapitalize()
-                            val varType =
-                                    if (item.attributes.getNamedItem("maxOccurs") != null) {
-                                        "List<${extractClassName(item.attributes.getNamedItem("type").nodeValue.replace("xsd:", "").replace("token", "String"))}>"
-                                    } else {
-                                        "${extractClassName(item.attributes.getNamedItem("type").nodeValue.replace("xsd:", "").replace("token", "String"))}"
-                                    }
-                            content.append("   @XmlElement(name = \"${item.attributes.getNamedItem("name").nodeValue}\", namespace = \"${xmlns}\"")
-                            if (item.attributes.getNamedItem("maxOccurs") != null && item.attributes.getNamedItem("maxOccurs").nodeValue == "unbounded") {
-                                content.append(", required = true)\n")
-                            } else {
-                                content.append(")\n")
-                            }
-                            content.append("   val ${varName}: ${varType}\n")
-                        }
-                    }
-                }
-            }
-        }
-        return content.toString()
-    }
-
     val schemaDefinition: String by lazy {
         val definition = StringBuilder()
         definition.append(" * <p>Kotlin class for ${item.attributes.item(0).nodeValue} complex type\n *\n")
@@ -64,7 +35,8 @@ class ComplexType(val packageName: String, val xmlns: String, val xsdns: String,
         definition.append(" * &lt;complexType name=\"${item.attributes.item(0).nodeValue}\">\n")
         definition.append(" *   &lt;complexContent>\n")
         definition.append(" *     &lt;restriction base=\"{${xsdns}}anyType\">\n")
-        for (node in arrayListOf(item.childNodes)) {
+        for (nodeIndex in 0..(item.childNodes.length-1)) {
+            val node = item.childNodes.item(nodeIndex)
             if (node is Element) {
                 when (node.nodeName) {
                     "xsd:sequence" -> {
@@ -94,6 +66,46 @@ class ComplexType(val packageName: String, val xmlns: String, val xsdns: String,
         definition.append(" * &lt;/complexType>\n")
         definition.append(" * </pre>\n *\n")
         definition.toString()
+    }
+
+    private fun processClassContent(): String {
+        val content = StringBuilder()
+        val elementsByTagName = item.getElementsByTagName("xsd:sequence")
+        if (elementsByTagName.item(0) != null) {
+            for (index in 0..(elementsByTagName.item(0).childNodes.length - 1)) {
+                val item = elementsByTagName.item(0).childNodes.item(index)
+                if (item is Element) {
+                    when (item.nodeName) {
+                        "xsd:element" -> {
+                            val varName = item.attributes.getNamedItem("name").nodeValue.decapitalize()
+                            val varType =
+                                    if (item.attributes.getNamedItem("maxOccurs") != null) {
+                                        "List<${getElementType(item)}>"
+                                    } else {
+                                        "${getElementType(item)}"
+                                    }
+                            content.append("   @XmlElement(name = \"${item.attributes.getNamedItem("name").nodeValue}\", namespace = \"${xmlns}\"")
+                            if (item.attributes.getNamedItem("maxOccurs") != null && item.attributes.getNamedItem("maxOccurs").nodeValue == "unbounded") {
+                                content.append(", required = true)\n")
+                            } else {
+                                content.append(")\n")
+                            }
+                            content.append("   val ${varName}: ${varType}\n")
+                        }
+                    }
+                }
+            }
+        }
+        return content.toString()
+    }
+
+    private fun getElementType(item: Element): String {
+        val type = item.attributes.getNamedItem("type").nodeValue
+        if (simpleTypeMap.containsKey(type)) {
+            return simpleTypeMap[type]!!
+        } else {
+            return extractClassName(type.replace("xsd:", "").replace("token", "String"))
+        }
     }
 
     private fun extractClassName(name: String): String {
