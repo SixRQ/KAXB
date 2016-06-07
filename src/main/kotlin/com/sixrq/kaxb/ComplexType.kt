@@ -30,24 +30,25 @@ class ComplexType(val packageName: String, val xmlns: String, val xsdns: String,
         val content = StringBuilder()
         val elementsByTagName = item.getElementsByTagName("xsd:sequence")
         if (elementsByTagName.item(0) != null) {
-            for (index in 0..(elementsByTagName.item(0).childNodes.length - 1)) {
-                val item = elementsByTagName.item(0).childNodes.item(index)
-                when (item.nodeName) {
-                    "xsd:element" -> {
-                        val varName = item.attributes.getNamedItem("name").nodeValue.decapitalize()
-                        val varType =
-                            if (item.attributes.getNamedItem("maxOccurs") != null) {
-                                "List<${extractClassName(item.attributes.getNamedItem("type").nodeValue.replace("xsd:", "").replace("token", "String"))}>"
+            for (item in arrayListOf(elementsByTagName.item(0).childNodes)) {
+                if (item is Element) {
+                    when (item.nodeName) {
+                        "xsd:element" -> {
+                            val varName = item.attributes.getNamedItem("name").nodeValue.decapitalize()
+                            val varType =
+                                    if (item.attributes.getNamedItem("maxOccurs") != null) {
+                                        "List<${extractClassName(item.attributes.getNamedItem("type").nodeValue.replace("xsd:", "").replace("token", "String"))}>"
+                                    } else {
+                                        "${extractClassName(item.attributes.getNamedItem("type").nodeValue.replace("xsd:", "").replace("token", "String"))}"
+                                    }
+                            content.append("   @XmlElement(name = \"${item.attributes.getNamedItem("name").nodeValue}\", namespace = \"${xmlns}\"")
+                            if (item.attributes.getNamedItem("maxOccurs") != null && item.attributes.getNamedItem("maxOccurs").nodeValue == "unbounded") {
+                                content.append(", required = true)\n")
                             } else {
-                                "${extractClassName(item.attributes.getNamedItem("type").nodeValue.replace("xsd:", "").replace("token", "String"))}"
+                                content.append(")\n")
                             }
-                        content.append("   @XmlElement(name = \"${item.attributes.getNamedItem("name").nodeValue}\", namespace = \"${xmlns}\"")
-                        if (item.attributes.getNamedItem("maxOccurs") != null && item.attributes.getNamedItem("maxOccurs").nodeValue == "unbounded") {
-                            content.append(", required = true)\n")
-                        } else {
-                            content.append(")\n")
+                            content.append("   val ${varName}: ${varType}\n")
                         }
-                        content.append("   val ${varName}: ${varType}\n")
                     }
                 }
             }
@@ -63,27 +64,28 @@ class ComplexType(val packageName: String, val xmlns: String, val xsdns: String,
         definition.append(" * &lt;complexType name=\"${item.attributes.item(0).nodeValue}\">\n")
         definition.append(" *   &lt;complexContent>\n")
         definition.append(" *     &lt;restriction base=\"{${xsdns}}anyType\">\n")
-        for (nodeIndex in 0..(item.childNodes.length-1)) {
-            val node = item.childNodes.item(nodeIndex)
-            when (node.nodeName) {
-                "xsd:sequence" -> {
-                    definition.append(" *       &lt;${node.nodeName.replace("xsd:", "")}>\n")
-                    for(childIndex in 0..(node.childNodes.length-1)) {
-                        val childNode = node.childNodes.item(childIndex)
-                        when (childNode) {
-                            is Element -> {
-                                definition.append(" *         &lt;${childNode.nodeName.replace("xsd:", "")}")
-                                definition.append(" name=\"${childNode.getAttribute("name")}\"")
-                                definition.append(" type=\"{${xmlns}}${childNode.getAttribute("type")}\"")
-                                if (childNode.getAttribute("maxOccurs") != null)
-                                    definition.append(" maxOccurs=\"${childNode.getAttribute("maxOccurs")}\"")
-                                if (childNode.getAttribute("maxOccurs") != null)
-                                    definition.append(" minOccurs=\"${childNode.getAttribute("minOccurs")}\"")
-                                definition.append("/>\n")
+        for (node in arrayListOf(item.childNodes)) {
+            if (node is Element) {
+                when (node.nodeName) {
+                    "xsd:sequence" -> {
+                        definition.append(" *       &lt;${node.nodeName.replace("xsd:", "")}>\n")
+                        for (childIndex in 0..(node.childNodes.length - 1)) {
+                            val childNode = node.childNodes.item(childIndex)
+                            when (childNode) {
+                                is Element -> {
+                                    definition.append(" *         &lt;${childNode.nodeName.replace("xsd:", "")}")
+                                    definition.append(" name=\"${childNode.getAttribute("name")}\"")
+                                    definition.append(" type=\"{${xmlns}}${childNode.getAttribute("type")}\"")
+                                    if (childNode.getAttribute("maxOccurs") != null)
+                                        definition.append(" maxOccurs=\"${childNode.getAttribute("maxOccurs")}\"")
+                                    if (childNode.getAttribute("maxOccurs") != null)
+                                        definition.append(" minOccurs=\"${childNode.getAttribute("minOccurs")}\"")
+                                    definition.append("/>\n")
+                                }
                             }
                         }
+                        definition.append(" *       &lt;/${node.nodeName.replace("xsd:", "")}>\n")
                     }
-                    definition.append(" *       &lt;/${node.nodeName.replace("xsd:", "")}>\n")
                 }
             }
         }
