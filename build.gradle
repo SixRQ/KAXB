@@ -3,7 +3,7 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        maven { url 'http://192.168.0.3:8081/artifactory/plugins-release' }
+        maven { url 'http://sixrq.no-ip.info:7073/artifactory/plugins-release' }
         mavenCentral()
     }
     dependencies {
@@ -16,7 +16,7 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 
 repositories {
-    maven { url 'http://192.168.0.3:8081/artifactory/plugins-release' }
+    maven { url 'http://sixrq.no-ip.info:7073/artifactory/plugins-release' }
     mavenCentral()
 }
 
