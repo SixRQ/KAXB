@@ -1,132 +1,59 @@
 package com.sixrq.kaxb
 
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import java.util.*
+class ComplexType(val xmlns: String, val packageName: String): Tag() {
+    override fun toString(): String{
+        val classDef  = StringBuilder()
+        var documentation: String = ""
+        var members : MutableList<Element> = mutableListOf()
 
-class ComplexType(val packageName: String, val xmlns: String, val xsdns: String, val simpleTypeMap: HashMap<String, String>, val item: Element) {
-    val className: String by lazy { extractClassName(item.attributes.item(0).nodeValue) }
-
-    val comment: String by lazy {
-        val comments = StringBuilder()
-        comments.append("/**\n")
-        val elementsByTagName = item.getElementsByTagName("xsd:annotation")
-        comments.append(when(elementsByTagName.length) {
-            1 -> { processAnnotation(elementsByTagName.item(0)) }
-            else -> ""
-        })
-        comments.append("\n *\n$schemaDefinition\n *\n**/\n\n")
-        comments.toString().replace("\n\n", "\n")
-    }
-
-    val definition: String by lazy {
-        val classDefinition = StringBuilder()
-        classDefinition.append("data class ${className} {\n")
-        classDefinition.append(processClassContent())
-        classDefinition.append("}\n")
-        classDefinition.toString()
-    }
-
-    val schemaDefinition: String by lazy {
-        val definition = StringBuilder()
-        definition.append(" * <p>Kotlin class for ${item.attributes.item(0).nodeValue} complex type\n *\n")
-        definition.append(" * <p>The following schema fragment specifies the expected content contained within this class.\n *\n")
-        definition.append(" * <pre>\n")
-        definition.append(" * &lt;complexType name=\"${item.attributes.item(0).nodeValue}\">\n")
-        definition.append(" *   &lt;complexContent>\n")
-        definition.append(" *     &lt;restriction base=\"{${xsdns}}anyType\">\n")
-        for (nodeIndex in 0..(item.childNodes.length-1)) {
-            val node = item.childNodes.item(nodeIndex)
-            if (node is Element) {
-                when (node.nodeName) {
-                    "xsd:sequence" -> {
-                        definition.append(" *       &lt;${node.nodeName.replace("xsd:", "")}>\n")
-                        for (childIndex in 0..(node.childNodes.length - 1)) {
-                            val childNode = node.childNodes.item(childIndex)
-                            when (childNode) {
-                                is Element -> {
-                                    definition.append(" *         &lt;${childNode.nodeName.replace("xsd:", "")}")
-                                    definition.append(" name=\"${childNode.getAttribute("name")}\"")
-                                    definition.append(" type=\"{${xmlns}}${childNode.getAttribute("type")}\"")
-                                    if (childNode.getAttribute("maxOccurs") != null)
-                                        definition.append(" maxOccurs=\"${childNode.getAttribute("maxOccurs")}\"")
-                                    if (childNode.getAttribute("maxOccurs") != null)
-                                        definition.append(" minOccurs=\"${childNode.getAttribute("minOccurs")}\"")
-                                    definition.append("/>\n")
-                                }
-                            }
-                        }
-                        definition.append(" *       &lt;/${node.nodeName.replace("xsd:", "")}>\n")
-                    }
-                }
+        for (child in children) {
+            if (child is Annotation) {
+                documentation = child.children[0].toString()
+            }
+            if (child is Sequence) {
+                members.addAll(processSequence(child))
             }
         }
-        definition.append(" *     &lt;/restriction>\n")
-        definition.append(" *   &lt;/complexContent>\n")
-        definition.append(" * &lt;/complexType>\n")
-        definition.append(" * </pre>\n *\n")
-        definition.toString()
+
+        classDef.append("$packageName\n\n")
+        classDef.append("import javax.xml.bind.annotation.XmlAccessType\n")
+        classDef.append("import javax.xml.bind.annotation.XmlAccessorType\n")
+        classDef.append("import javax.xml.bind.annotation.XmlElement\n")
+        classDef.append("import javax.xml.bind.annotation.XmlSchemaType\n")
+        classDef.append("import javax.xml.bind.annotation.XmlType\n")
+
+        if(documentation.isNotBlank()) {
+            classDef.append("\n$documentation\n")
+        }
+        classDef.append("@XmlAccessorType(XmlAccessType.FIELD)\n")
+        classDef.append("@XmlType(name = \"$elementName\", namespace = \"$xmlns\", propOrder = {\n")
+        for (member in members) {
+            classDef.append("    \"${member.name.replaceFirst(member.name[0], member.name[0].toLowerCase())}\",\n")
+        }
+        classDef.append("}\n")
+        classDef.append("\ndata class $name ${appendType()}{\n")
+        for (member in members) {
+            classDef.append("    @XmlElement(name = \"${member.name}\", namespace = \"$xmlns\")\n")
+            classDef.append("    $member\n")
+        }
+        classDef.append("}\n")
+        return classDef.toString()
     }
 
-    private fun processClassContent(): String {
-        val content = StringBuilder()
-        val elementsByTagName = item.getElementsByTagName("xsd:sequence")
-        if (elementsByTagName.item(0) != null) {
-            for (index in 0..(elementsByTagName.item(0).childNodes.length - 1)) {
-                val item = elementsByTagName.item(0).childNodes.item(index)
-                if (item is Element) {
-                    when (item.nodeName) {
-                        "xsd:element" -> {
-                            val varName = item.attributes.getNamedItem("name").nodeValue.decapitalize()
-                            val varType =
-                                    if (item.attributes.getNamedItem("maxOccurs") != null) {
-                                        "List<${getElementType(item)}>"
-                                    } else {
-                                        "${getElementType(item)}"
-                                    }
-                            content.append("   @XmlElement(name = \"${item.attributes.getNamedItem("name").nodeValue}\", namespace = \"${xmlns}\"")
-                            if (item.attributes.getNamedItem("maxOccurs") != null && item.attributes.getNamedItem("maxOccurs").nodeValue == "unbounded") {
-                                content.append(", required = true)\n")
-                            } else {
-                                content.append(")\n")
-                            }
-                            content.append("   val ${varName}: ${varType}\n")
-                        }
-                    }
-                }
+    private fun processSequence(child: Tag): MutableList<Element> {
+        val members : MutableList<Element> = mutableListOf()
+        for (element in child.children) {
+            if (element is Element) {
+                members.add(element)
             }
         }
-        return content.toString()
+        return members
     }
 
-    private fun getElementType(item: Element): String {
-        val type = item.attributes.getNamedItem("type").nodeValue
-        if (simpleTypeMap.containsKey(type)) {
-            return simpleTypeMap[type]!!
-        } else {
-            return extractClassName(type.replace("xsd:", "").replace("token", "String"))
+    private fun appendType() : String {
+        if (type.isNotBlank()) {
+            return ": $type "
         }
-    }
-
-    private fun extractClassName(name: String): String {
-        val className = StringBuilder()
-        name.split('_').forEach {
-            className.append(it.capitalize())
-        }
-        return className.toString()
-    }
-
-    private fun processAnnotation(item: Node): String {
-        val comment = StringBuilder()
-        for (index in 0..(item.childNodes.length - 1)) {
-            if (item.childNodes.item(index).hasChildNodes()) {
-                comment.append(item.childNodes.item(index).firstChild.nodeValue)
-            }
-        }
-        return " * ${comment.toString().replace("\n", "\n * ")}"
-    }
-
-    override fun toString(): String {
-        return "package $packageName\n\n$comment\n$definition"
+        return ""
     }
 }
