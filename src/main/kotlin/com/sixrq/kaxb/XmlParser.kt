@@ -25,6 +25,9 @@ class XmlParser(val filename: String, val packageName: String) {
             if (child is ComplexType) {
                 println(child)
             }
+            if (child is SimpleType) {
+                println(child)
+            }
         }
     }
 
@@ -34,12 +37,14 @@ class XmlParser(val filename: String, val packageName: String) {
             val childTag = {
                 when (item.nodeName) {
                     "xsd:complexType" -> ComplexType(xmlns, packageName)
-                    "xsd:simpleType" -> SimpleType()
+                    "xsd:simpleType" -> SimpleType(xmlns, packageName)
                     "xsd:element" -> Element()
                     "xsd:extension" -> Extension()
                     "xsd:annotation" -> Annotation()
                     "xsd:documentation" -> Documentation()
                     "xsd:sequence" -> Sequence()
+                    "xsd:restriction" -> Restriction()
+                    "xsd:enumeration" -> Enumeration()
                     else -> Tag()
                 }
             }.invoke()
