@@ -26,12 +26,13 @@ class ComplexType(val xmlns: String, val packageName: String): Tag() {
             classDef.append("\n$documentation\n")
         }
         classDef.append("\n@XmlAccessorType(XmlAccessType.FIELD)\n")
-        classDef.append("@XmlType(name = \"$elementName\", namespace = \"$xmlns\", propOrder = {\n")
+        classDef.append("@XmlType(name = \"$elementName\", namespace = \"$xmlns\", propOrder = arrayOf(\n")
         for (member in members) {
             classDef.append("    \"${member.name.replaceFirst(member.name[0], member.name[0].toLowerCase())}\",\n")
         }
-        classDef.append("}")
-        classDef.append("\ndata class $name ${appendType()}{\n")
+        classDef.setLength(classDef.length-2)
+        classDef.append("\n))")
+        classDef.append("\nclass $name ${appendType()}{\n")
         for (member in members) {
             classDef.append("    @XmlElement(name = \"${member.name}\", namespace = \"$xmlns\")\n")
             classDef.append("    $member\n")

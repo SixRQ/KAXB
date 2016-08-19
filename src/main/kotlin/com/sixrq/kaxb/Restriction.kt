@@ -7,7 +7,7 @@ class Restriction : Tag() {
             "xsd:token" -> return "String"
             "xsd:decimal" -> return "BigDecimal"
             "xsd:double" -> return "Double"
-            "xsd:hexbinary" -> return "byte[]"
+            "xsd:hexbinary" -> return "ByteArray"
             else -> return extractClassName(type)
         }
     }

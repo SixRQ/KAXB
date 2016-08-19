@@ -17,27 +17,61 @@ class XmlParser(val filename: String, val packageName: String) {
     val xsdns: String by lazy { root.getAttribute("xmlns:xsd") }
 
 
-    fun readAndDisplayDocument() {
+    fun readAndDisplayDocument() : Map<String, String> {
         val elements = root.childNodes
         val schema = Schema()
-        val basicType: MutableMap<String, String> = hashMapOf()
+        val basicTypes: MutableMap<String, String> = hashMapOf()
+        val classes: MutableMap<String, String> = hashMapOf()
         processElements(schema, elements)
 
+        basicTypes.putAll(extractBasicTypes(schema))
+        classes.putAll(extractEnumerations(schema))
+        classes.putAll(extractClasses(schema, basicTypes))
+
+        for (classDef in classes.entries) {
+            println(classDef)
+        }
+        return classes
+    }
+
+    private fun extractEnumerations(schema: Schema) : Map<String, String> {
+        val classes: MutableMap<String, String> = hashMapOf()
+        for (child in schema.children.filter {
+            it is SimpleType &&
+                    it.children.filter {
+                        it is Restriction &&
+                                it.children.filter { it is Enumeration }.isNotEmpty()
+                    }.isNotEmpty()
+        }) {
+            classes.put(child.name, child.toString())
+        }
+        return classes
+    }
+
+    private fun extractClasses(schema: Schema, basicTypes: Map<String, String>) : Map<String, String> {
+        val classes: MutableMap<String, String> = hashMapOf()
+        for (child in schema.children.filter { it is ComplexType } ) {
+            classes.put(child.name, substituteBasicTypes(child.toString(), basicTypes))
+        }
+        return classes
+    }
+
+    private fun extractBasicTypes(schema: Schema) : Map<String, String> {
+        val basicTypes: MutableMap<String, String> = hashMapOf()
         for (child in schema.children.filter { it is SimpleType &&
                 it.children.filter { it is Restriction &&
                         it.children.filter { it is Enumeration }.isEmpty()}.isNotEmpty()}) {
-            basicType.put(child.name, (child.children.filter { it is Restriction }[0] as Restriction).extractType())
+            basicTypes.put(child.name, (child.children.filter { it is Restriction }[0] as Restriction).extractType())
         }
+        return basicTypes
+    }
 
-        for (child in schema.children.filter { it is SimpleType &&
-                it.children.filter { it is Restriction &&
-                        it.children.filter { it is Enumeration }.isNotEmpty()}.isNotEmpty()}) {
-            println(child)
+    private fun substituteBasicTypes(classDef: String, basicTypes: Map<String, String>): String {
+        var result = classDef
+        for (entry in basicTypes.entries) {
+            result = result.replace(entry.key, entry.value)
         }
-
-        for (child in schema.children.filter { it is ComplexType } ) {
-            println(child)
-        }
+        return result
     }
 
     private fun processElements(tag: Tag, elements: NodeList) {
