@@ -25,19 +25,18 @@ class SimpleType(val xmlns: String, val packageName: String) : Tag() {
         }
 
         classDef.append("$packageName\n\n")
-        classDef.append("import javax.xml.bind.annotation.XmlAccessType\n")
-        classDef.append("import javax.xml.bind.annotation.XmlAccessorType\n")
-        classDef.append("import javax.xml.bind.annotation.XmlElement\n")
-        classDef.append("import javax.xml.bind.annotation.XmlSchemaType\n")
+        classDef.append("import javax.xml.bind.annotation.XmlEnum\n")
+        classDef.append("import javax.xml.bind.annotation.XmlEnumValue\n")
         classDef.append("import javax.xml.bind.annotation.XmlType\n")
 
         if(documentation.isNotBlank()) {
             classDef.append("\n$documentation\n")
         }
-        classDef.append("\n@XmlAccessorType(XmlAccessType.FIELD)\n")
-        classDef.append("@XmlType(name = \"$elementName\", namespace = \"$xmlns\")")
+        classDef.append("\n@XmlType(name = \"$elementName\", namespace = \"$xmlns\")")
+        classDef.append("\n@XmlEnum")
         classDef.append("\nenum class $name(${appendType()}) {\n")
         for (member in members) {
+            classDef.append("    @XmlEnumValue(\"${member.value}\")\n")
             classDef.append("    $member\n")
         }
         classDef.setLength(classDef.length-2)
@@ -45,7 +44,7 @@ class SimpleType(val xmlns: String, val packageName: String) : Tag() {
 
         if (appendType().isNotEmpty()) {
             classDef.append("\n    companion object {\n")
-            classDef.append("        fun from(${appendType().replace("val ", "")}): $name = $name.values().first { it.value == value }\n")
+            classDef.append("        fun fromValue(${appendType().replace("val ", "")}): $name = $name.values().first { it.value == value }\n")
             classDef.append("    }\n")
         }
         classDef.append("}\n")
@@ -64,18 +63,11 @@ class SimpleType(val xmlns: String, val packageName: String) : Tag() {
     }
 
     private fun appendType() : String {
-        val restriction = children.filter { it is Restriction }
-        if (restriction[0].type.isNotBlank()) {
-            return "val value : ${extractType(restriction[0].type)} "
+        val restriction = (children.filter { it is Restriction })[0] as Restriction
+        if (restriction.type.isNotBlank()) {
+            return "val value : ${restriction.extractType()} "
         }
         return ""
     }
 
-    private fun extractType(type: String) : String {
-        when (type.toLowerCase()) {
-            "xsd:string" -> return "String"
-            "xsd:token" -> return "String"
-            else -> return extractClassName(type)
-        }
-    }
 }
