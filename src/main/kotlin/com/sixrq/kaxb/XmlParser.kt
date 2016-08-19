@@ -20,14 +20,23 @@ class XmlParser(val filename: String, val packageName: String) {
     fun readAndDisplayDocument() {
         val elements = root.childNodes
         val schema = Schema()
+        val basicType: MutableMap<String, String> = hashMapOf()
         processElements(schema, elements)
-        for (child in schema.children) {
-            if (child is ComplexType) {
-                println(child)
-            }
-            if (child is SimpleType) {
-                println(child)
-            }
+
+        for (child in schema.children.filter { it is SimpleType &&
+                it.children.filter { it is Restriction &&
+                        it.children.filter { it is Enumeration }.isEmpty()}.isNotEmpty()}) {
+            basicType.put(child.name, (child.children.filter { it is Restriction }[0] as Restriction).extractType())
+        }
+
+        for (child in schema.children.filter { it is SimpleType &&
+                it.children.filter { it is Restriction &&
+                        it.children.filter { it is Enumeration }.isNotEmpty()}.isNotEmpty()}) {
+            println(child)
+        }
+
+        for (child in schema.children.filter { it is ComplexType } ) {
+            println(child)
         }
     }
 
