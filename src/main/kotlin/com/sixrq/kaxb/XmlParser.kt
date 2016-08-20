@@ -15,18 +15,18 @@ class XmlParser(val filename: String, val packageName: String) {
     }
     val xmlns: String by lazy { root.getAttribute("xmlns") }
     val xsdns: String by lazy { root.getAttribute("xmlns:xsd") }
+    val primitiveTypeMapping: MutableMap<String, String> = hashMapOf()
 
 
     fun readAndDisplayDocument() : Map<String, String> {
         val elements = root.childNodes
         val schema = Schema()
-        val basicTypes: MutableMap<String, String> = hashMapOf()
         val classes: MutableMap<String, String> = hashMapOf()
         processElements(schema, elements)
 
-        basicTypes.putAll(extractBasicTypes(schema))
+        primitiveTypeMapping.putAll(extractBasicTypes(schema))
         classes.putAll(extractEnumerations(schema))
-        classes.putAll(extractClasses(schema, basicTypes))
+        classes.putAll(extractClasses(schema))
 
         for (classDef in classes.entries) {
             println(classDef)
@@ -48,10 +48,10 @@ class XmlParser(val filename: String, val packageName: String) {
         return classes
     }
 
-    private fun extractClasses(schema: Schema, basicTypes: Map<String, String>) : Map<String, String> {
+    private fun extractClasses(schema: Schema) : Map<String, String> {
         val classes: MutableMap<String, String> = hashMapOf()
         for (child in schema.children.filter { it is ComplexType } ) {
-            classes.put(child.name, substituteBasicTypes(child.toString(), basicTypes))
+            classes.put(child.name, child.toString())
         }
         return classes
     }
@@ -81,7 +81,7 @@ class XmlParser(val filename: String, val packageName: String) {
                 when (item.nodeName) {
                     "xsd:complexType" -> ComplexType(xmlns, packageName)
                     "xsd:simpleType" -> SimpleType(xmlns, packageName)
-                    "xsd:element" -> Element()
+                    "xsd:element" -> Element(primitiveTypeMapping)
                     "xsd:extension" -> Extension()
                     "xsd:annotation" -> Annotation()
                     "xsd:documentation" -> Documentation()

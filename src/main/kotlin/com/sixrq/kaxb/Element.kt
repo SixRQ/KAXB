@@ -1,6 +1,6 @@
 package com.sixrq.kaxb
 
-class Element : Tag() {
+class Element(val primitiveTypeMapping: MutableMap<String, String>) : Tag() {
     override fun toString(): String {
         return "${getLateinit()}var ${name.replaceFirst(name[0], name[0].toLowerCase())} : ${getTypeDefinition()}"
     }
@@ -16,12 +16,18 @@ class Element : Tag() {
         when (type.toLowerCase()) {
             "xsd:string" -> return "String"
             "xsd:token" -> return "String"
-            else -> return extractClassName(type)
+            else -> {
+                val className = extractClassName(type)
+                if (primitiveTypeMapping.containsKey(className)) {
+                    return primitiveTypeMapping.get(className).toString()
+                } else {
+                    return className
+                }}
         }
     }
 
     private fun getLateinit(): String {
-        if (maxOccurs.isNotBlank()) {
+        if (maxOccurs.isNotBlank() || primitiveTypeMapping.containsKey(extractClassName(type))) {
             return ""
         }
         return "lateinit "
