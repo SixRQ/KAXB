@@ -20,7 +20,7 @@ class XmlParser(val filename: String, val packageName: String) {
 
     fun readAndDisplayDocument() : Map<String, String> {
         val elements = root.childNodes
-        val schema = Schema()
+        val schema = Schema(xmlns)
         val classes: MutableMap<String, String> = hashMapOf()
         processElements(schema, elements)
 
@@ -28,50 +28,40 @@ class XmlParser(val filename: String, val packageName: String) {
         classes.putAll(extractEnumerations(schema))
         classes.putAll(extractClasses(schema))
 
-        for (classDef in classes.entries) {
-            println(classDef)
-        }
+        classes.entries.forEach { println(it) }
         return classes
     }
 
     private fun extractEnumerations(schema: Schema) : Map<String, String> {
         val classes: MutableMap<String, String> = hashMapOf()
-        for (child in schema.children.filter {
+        schema.children.filter {
             it is SimpleType &&
                     it.children.filter {
                         it is Restriction &&
                                 it.children.filter { it is Enumeration }.isNotEmpty()
                     }.isNotEmpty()
-        }) {
-            classes.put(child.name, child.toString())
+        }.forEach {
+            classes.put(it.name, it.toString())
         }
         return classes
     }
 
     private fun extractClasses(schema: Schema) : Map<String, String> {
         val classes: MutableMap<String, String> = hashMapOf()
-        for (child in schema.children.filter { it is ComplexType } ) {
-            classes.put(child.name, child.toString())
+        schema.children.filter { it is ComplexType }.forEach {
+            classes.put(it.name, it.toString())
         }
         return classes
     }
 
     private fun extractBasicTypes(schema: Schema) : Map<String, String> {
         val basicTypes: MutableMap<String, String> = hashMapOf()
-        for (child in schema.children.filter { it is SimpleType &&
+        schema.children.filter { it is SimpleType &&
                 it.children.filter { it is Restriction &&
-                        it.children.filter { it is Enumeration }.isEmpty()}.isNotEmpty()}) {
-            basicTypes.put(child.name, (child.children.filter { it is Restriction }[0] as Restriction).extractType())
+                        it.children.filter { it is Enumeration }.isEmpty()}.isNotEmpty()}.forEach {
+            basicTypes.put(it.name, (it.children.filter { it is Restriction }[0] as Restriction).extractType())
         }
         return basicTypes
-    }
-
-    private fun substituteBasicTypes(classDef: String, basicTypes: Map<String, String>): String {
-        var result = classDef
-        for (entry in basicTypes.entries) {
-            result = result.replace(entry.key, entry.value)
-        }
-        return result
     }
 
     private fun processElements(tag: Tag, elements: NodeList) {
@@ -81,14 +71,14 @@ class XmlParser(val filename: String, val packageName: String) {
                 when (item.nodeName) {
                     "xsd:complexType" -> ComplexType(xmlns, packageName)
                     "xsd:simpleType" -> SimpleType(xmlns, packageName)
-                    "xsd:element" -> Element(primitiveTypeMapping)
-                    "xsd:extension" -> Extension()
-                    "xsd:annotation" -> Annotation()
-                    "xsd:documentation" -> Documentation()
-                    "xsd:sequence" -> Sequence()
-                    "xsd:restriction" -> Restriction()
-                    "xsd:enumeration" -> Enumeration()
-                    else -> Tag()
+                    "xsd:element" -> Element(xmlns, primitiveTypeMapping)
+                    "xsd:extension" -> Extension(xmlns)
+                    "xsd:annotation" -> Annotation(xmlns)
+                    "xsd:documentation" -> Documentation(xmlns)
+                    "xsd:sequence" -> Sequence(xmlns)
+                    "xsd:restriction" -> Restriction(xmlns)
+                    "xsd:enumeration" -> Enumeration(xmlns)
+                    else -> Tag(xmlns)
                 }
             }.invoke()
             if (item.hasAttributes() || item.hasChildNodes()) {

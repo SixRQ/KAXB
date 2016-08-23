@@ -1,3 +1,3 @@
 package com.sixrq.kaxb
 
-class Extension : Tag()
+class Extension(xmlns: String) : Tag(xmlns)

@@ -2,7 +2,7 @@ package com.sixrq.kaxb
 
 import org.w3c.dom.Node
 
-class Documentation : Tag() {
+class Documentation(xmlns: String) : Tag(xmlns) {
     override fun processText(item: Node) {
         value = item.nodeValue
     }

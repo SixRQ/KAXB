@@ -1,19 +1,17 @@
 package com.sixrq.kaxb
 
-class ComplexType(val xmlns: String, val packageName: String): Tag() {
+class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
     override fun toString(): String{
-        val classDef  = StringBuilder()
-        var documentation: String = ""
-        var members : MutableList<Element> = mutableListOf()
+        val classDef = StringBuilder()
+        val documentation = StringBuilder()
+        val properties : MutableList<Tag> = mutableListOf()
 
-        for (child in children) {
-            if (child is Annotation) {
-                documentation = child.children[0].toString()
+        children.filter { it is Annotation }.forEach {
+                it.children.filter{ document -> document is Documentation}.
+                        forEach { comment -> documentation.append("${comment.toString()}\n")}
             }
-            if (child is Sequence) {
-                members.addAll(processSequence(child))
-            }
-        }
+
+        children.filter{ propertyGroup -> propertyGroup is Sequence }.forEach { properties.addAll(it.children.filter { it is Element }) }
 
         classDef.append("$packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlAccessType\n")
@@ -27,28 +25,17 @@ class ComplexType(val xmlns: String, val packageName: String): Tag() {
         }
         classDef.append("\n@XmlAccessorType(XmlAccessType.FIELD)\n")
         classDef.append("@XmlType(name = \"$elementName\", namespace = \"$xmlns\", propOrder = arrayOf(\n")
-        for (member in members) {
-            classDef.append("    \"${member.name.replaceFirst(member.name[0], member.name[0].toLowerCase())}\",\n")
+        properties.forEach { property ->
+            classDef.append("    \"${property.getPropertyName()}\",\n")
         }
         classDef.setLength(classDef.length-2)
         classDef.append("\n))")
         classDef.append("\nclass $name ${appendType()}{\n")
-        for (member in members) {
-            classDef.append("    @XmlElement(name = \"${member.name}\", namespace = \"$xmlns\")\n")
-            classDef.append("    $member\n")
+        properties.forEach { property ->
+            classDef.append("$property\n")
         }
         classDef.append("}\n")
         return classDef.toString()
-    }
-
-    private fun processSequence(child: Tag): MutableList<Element> {
-        val members : MutableList<Element> = mutableListOf()
-        for (element in child.children) {
-            if (element is Element) {
-                members.add(element)
-            }
-        }
-        return members
     }
 
     private fun appendType() : String {

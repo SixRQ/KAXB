@@ -1,6 +1,6 @@
 package com.sixrq.kaxb
 
-class Restriction : Tag() {
+class Restriction(xmlns: String) : Tag(xmlns) {
     fun extractType() : String {
         when (type.toLowerCase()) {
             "xsd:string" -> return "String"

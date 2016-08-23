@@ -1,8 +1,20 @@
 package com.sixrq.kaxb
 
-class Element(val primitiveTypeMapping: MutableMap<String, String>) : Tag() {
+class Element(xmlns: String, val primitiveTypeMapping: MutableMap<String, String>) : Tag(xmlns) {
     override fun toString(): String {
-        return "${getLateinit()}var ${name.replaceFirst(name[0], name[0].toLowerCase())} : ${getTypeDefinition()}"
+        return "    @XmlElement(name = \"${name}\", namespace = \"$xmlns\")\n" +
+                "${getSchemaType()}" +
+                "    ${getLateinit()}var ${getPropertyName()} : ${getTypeDefinition()}"
+    }
+
+    private fun getSchemaType(): String {
+        if (maxOccurs.isBlank()) {
+            when (type.toLowerCase()) {
+                "xsd:token" -> return "    @XmlSchemaType(\"token\")\n"
+                else -> return ""
+            }
+        }
+        return ""
     }
 
     private fun getTypeDefinition(): String {

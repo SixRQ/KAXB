@@ -1,3 +1,3 @@
 package com.sixrq.kaxb
 
-class Annotation : Tag()
+class Annotation(xmlns: String) : Tag(xmlns)

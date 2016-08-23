@@ -1,3 +1,3 @@
 package com.sixrq.kaxb
 
-class Sequence : Tag()
+class Sequence(xmlns: String) : Tag(xmlns)

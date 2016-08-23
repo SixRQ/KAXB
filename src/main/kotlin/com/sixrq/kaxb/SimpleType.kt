@@ -1,28 +1,23 @@
 package com.sixrq.kaxb
 
-class SimpleType(val xmlns: String, val packageName: String) : Tag() {
+class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
     override fun toString(): String{
-        for (child in children) {
-            if (child.children.isNotEmpty() && child.children[0] is Enumeration) {
-                return processEnumerationClass()
-            }
+        if (children.filter { it.children.isNotEmpty() && it.children.filter { it is Enumeration }.isNotEmpty() }.isNotEmpty()) {
+            return processEnumerationClass()
         }
         return ""
     }
 
     private fun processEnumerationClass(): String {
-        val classDef  = StringBuilder()
-        var documentation: String = ""
-        var members : MutableList<Enumeration> = mutableListOf()
+        val classDef = StringBuilder()
+        val documentation = StringBuilder()
+        val members : MutableList<Tag> = mutableListOf()
 
-        for (child in children) {
-            if (child is Annotation) {
-                documentation = child.children[0].toString()
-            }
-            if (child is Restriction) {
-                members.addAll(processEnumeration(child))
-            }
+        children.filter { it is Annotation }.forEach {
+            it.children.filter{ it is Documentation}.forEach { documentation.append("${it.toString()}\n")}
         }
+
+        children.filter{ restriction -> restriction is Restriction }.forEach { member -> members.addAll(member.children.filter { enum -> enum is Enumeration }) }
 
         classDef.append("$packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlEnum\n")
@@ -35,9 +30,8 @@ class SimpleType(val xmlns: String, val packageName: String) : Tag() {
         classDef.append("\n@XmlType(name = \"$elementName\", namespace = \"$xmlns\")")
         classDef.append("\n@XmlEnum")
         classDef.append("\nenum class $name(${appendType()}) {\n")
-        for (member in members) {
-            classDef.append("    @XmlEnumValue(\"${member.value}\")\n")
-            classDef.append("    $member\n")
+        members.forEach { member ->
+            classDef.append("$member\n")
         }
         classDef.setLength(classDef.length-2)
         classDef.append(";\n")
@@ -50,16 +44,6 @@ class SimpleType(val xmlns: String, val packageName: String) : Tag() {
         classDef.append("}\n")
         return classDef.toString()
 
-    }
-
-    private fun processEnumeration(child: Tag): MutableList<Enumeration> {
-        val members : MutableList<Enumeration> = mutableListOf()
-        for (element in child.children) {
-            if (element is Enumeration) {
-                members.add(element)
-            }
-        }
-        return members
     }
 
     private fun appendType() : String {
