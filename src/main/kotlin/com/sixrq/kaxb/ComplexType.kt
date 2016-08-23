@@ -6,12 +6,12 @@ class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
         val documentation = StringBuilder()
         val properties : MutableList<Tag> = mutableListOf()
 
-        children.filter { it is Annotation }.forEach {
+        children.filter { annotation -> annotation is Annotation }.forEach {
                 it.children.filter{ document -> document is Documentation}.
                         forEach { comment -> documentation.append("${comment.toString()}\n")}
             }
 
-        children.filter{ propertyGroup -> propertyGroup is Sequence }.forEach { properties.addAll(it.children.filter { it is Element }) }
+        properties.addAll(children.filter{ propertyGroup -> propertyGroup is Sequence }.flatMap { it.children.filter { element -> element is Element } })
 
         classDef.append("$packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlAccessType\n")

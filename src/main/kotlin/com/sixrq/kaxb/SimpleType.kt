@@ -11,13 +11,11 @@ class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
     private fun processEnumerationClass(): String {
         val classDef = StringBuilder()
         val documentation = StringBuilder()
-        val members : MutableList<Tag> = mutableListOf()
 
         children.filter { it is Annotation }.forEach {
-            it.children.filter{ it is Documentation}.forEach { documentation.append("${it.toString()}\n")}
+            it.children.filter{ document -> document is Documentation}.
+                    forEach { comment -> documentation.append("${comment.toString()}\n")}
         }
-
-        children.filter{ restriction -> restriction is Restriction }.forEach { member -> members.addAll(member.children.filter { enum -> enum is Enumeration }) }
 
         classDef.append("$packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlEnum\n")
@@ -30,7 +28,7 @@ class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
         classDef.append("\n@XmlType(name = \"$elementName\", namespace = \"$xmlns\")")
         classDef.append("\n@XmlEnum")
         classDef.append("\nenum class $name(${appendType()}) {\n")
-        members.forEach { member ->
+        children.filter{ restriction -> restriction is Restriction}.flatMap { it.children.filter { enum -> enum is Enumeration } }.forEach { member ->
             classDef.append("$member\n")
         }
         classDef.setLength(classDef.length-2)
