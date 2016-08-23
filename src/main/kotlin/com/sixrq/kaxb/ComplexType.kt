@@ -11,14 +11,16 @@ class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
                         forEach { comment -> documentation.append("${comment.toString()}\n")}
             }
 
-        properties.addAll(children.filter{ propertyGroup -> propertyGroup is Sequence }.flatMap { it.children.filter { element -> element is Element } })
-
+        properties.addAll(children.filter{ propertyGroup -> propertyGroup is Sequence }.
+                flatMap { it.children.filter { element -> element is Element || element is AnyElement } })
         classDef.append("$packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlAccessType\n")
         classDef.append("import javax.xml.bind.annotation.XmlAccessorType\n")
-        classDef.append("import javax.xml.bind.annotation.XmlElement\n")
-        classDef.append("import javax.xml.bind.annotation.XmlSchemaType\n")
         classDef.append("import javax.xml.bind.annotation.XmlType\n")
+
+        children.filter{ propertyGroup -> propertyGroup is Sequence }.
+                flatMap { it.children.filter { element -> element is Element || element is AnyElement } }.
+                flatMap {  it.imports }.distinct().forEach { classDef.append( "import $it\n" ) }
 
         if(documentation.isNotBlank()) {
             classDef.append("\n$documentation\n")

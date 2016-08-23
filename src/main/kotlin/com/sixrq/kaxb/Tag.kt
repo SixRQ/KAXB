@@ -9,6 +9,8 @@ open class Tag(val xmlns: String) {
     var minOccurs: String = ""
     var maxOccurs: String = ""
     var value: String = ""
+    var processContents: String = ""
+    val imports: MutableList<String> = mutableListOf()
 
     val children: MutableList<Tag> = mutableListOf()
 
@@ -31,9 +33,10 @@ open class Tag(val xmlns: String) {
         if (item.attributes.getNamedItem("value") != null) {
             value = item.attributes.getNamedItem("value").nodeValue
         }
+        if (item.attributes.getNamedItem("processContents") != null) {
+            processContents = item.attributes.getNamedItem("processContents").nodeValue
+        }
     }
-
-    open fun processText(item: Node) {}
 
     fun getPropertyName() = name.replaceFirst(name[0], name[0].toLowerCase())
 
@@ -43,6 +46,21 @@ open class Tag(val xmlns: String) {
             className.append(it.capitalize())
         }
         return className.toString()
+    }
+
+    open fun processText(item: Node) {}
+
+    open fun extractType() : String {
+        when (type.toLowerCase()) {
+            "xsd:string" -> return "String"
+            "xsd:token" -> return "String"
+            "xsd:decimal" -> return "BigDecimal"
+            "xsd:double" -> return "Double"
+            "xsd:hexbinary" -> return "ByteArray"
+            "xsd:boolean" -> return "Boolean"
+            "xsd:any" -> return "Any"
+            else -> return extractClassName(type)
+        }
     }
 
     override fun toString(): String{

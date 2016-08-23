@@ -72,6 +72,7 @@ class XmlParser(val filename: String, val packageName: String) {
                     "xsd:complexType" -> ComplexType(xmlns, packageName)
                     "xsd:simpleType" -> SimpleType(xmlns, packageName)
                     "xsd:element" -> Element(xmlns, primitiveTypeMapping)
+                    "xsd:any" -> AnyElement(xmlns, primitiveTypeMapping)
                     "xsd:extension" -> Extension(xmlns)
                     "xsd:annotation" -> Annotation(xmlns)
                     "xsd:documentation" -> Documentation(xmlns)
