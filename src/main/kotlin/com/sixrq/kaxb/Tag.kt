@@ -10,7 +10,8 @@ open class Tag(val xmlns: String) {
     var maxOccurs: String = ""
     var value: String = ""
     var processContents: String = ""
-    val imports: MutableList<String> = mutableListOf()
+    var base: String = ""
+    var imports: MutableList<String> = mutableListOf()
 
     val children: MutableList<Tag> = mutableListOf()
 
@@ -35,6 +36,9 @@ open class Tag(val xmlns: String) {
         }
         if (item.attributes.getNamedItem("processContents") != null) {
             processContents = item.attributes.getNamedItem("processContents").nodeValue
+        }
+        if (item.attributes.getNamedItem("base") != null) {
+            base = item.attributes.getNamedItem("base").nodeValue
         }
     }
 

@@ -4,9 +4,7 @@ import org.w3c.dom.Node
 
 open class Element(xmlns: String, val primitiveTypeMapping: MutableMap<String, String>) : Tag(xmlns) {
     init {
-        if (this !is AnyElement) {
-            imports.add("javax.xml.bind.annotation.XmlElement")
-        }
+        imports = mutableListOf("javax.xml.bind.annotation.XmlElement")
     }
 
     override fun processAttributes(item: Node?) {
@@ -45,7 +43,7 @@ open class Element(xmlns: String, val primitiveTypeMapping: MutableMap<String, S
         return "lateinit "
     }
 
-    private fun getSchemaType(): String {
+    open fun getSchemaType(): String {
         if (maxOccurs.isBlank()) {
             when (type.toLowerCase()) {
                 "xsd:token" -> return "    @XmlSchemaType(\"token\")\n"

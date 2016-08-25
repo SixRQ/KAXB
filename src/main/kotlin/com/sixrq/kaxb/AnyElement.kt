@@ -4,7 +4,7 @@ class AnyElement(xmlns: String,  primitiveTypeMapping: MutableMap<String, String
     init {
         name = "Any"
         type = "Any"
-        imports.add("javax.xml.bind.annotation.XmlAnyElement")
+        imports = mutableListOf("javax.xml.bind.annotation.XmlAnyElement")
     }
 
     override fun toString(): String {
