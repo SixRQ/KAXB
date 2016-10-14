@@ -32,7 +32,7 @@ class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
         }
         classDef.setLength(classDef.length-2)
         classDef.append("\n))")
-        classDef.append("\nclass $name ${appendType()}{\n")
+        classDef.append("\ndata class $name ${appendType()}{\n")
         properties.forEach { property ->
             classDef.append("$property\n")
         }
