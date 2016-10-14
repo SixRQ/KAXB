@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 import java.util.regex.Pattern
 

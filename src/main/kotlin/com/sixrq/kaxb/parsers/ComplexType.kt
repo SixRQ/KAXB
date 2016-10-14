@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
     override fun toString(): String{
@@ -7,7 +7,7 @@ class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
         val properties : MutableList<Tag> = mutableListOf()
 
         children.filter { annotation -> annotation is Annotation }.forEach {
-                it.children.filter{ document -> document is Documentation}.
+                it.children.filter{ document -> document is Documentation }.
                         forEach { comment -> documentation.append("${comment.toString()}\n")}
             }
 

@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
     override fun toString(): String{
@@ -13,7 +13,7 @@ class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
         val documentation = StringBuilder()
 
         children.filter { it is Annotation }.forEach {
-            it.children.filter{ document -> document is Documentation}.
+            it.children.filter{ document -> document is Documentation }.
                     forEach { comment -> documentation.append("${comment.toString()}\n")}
         }
 
@@ -28,7 +28,7 @@ class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
         classDef.append("\n@XmlType(name = \"$elementName\", namespace = \"$xmlns\")")
         classDef.append("\n@XmlEnum")
         classDef.append("\nenum class $name(${appendType()}) {\n")
-        children.filter{ restriction -> restriction is Restriction}.flatMap { it.children.filter { enum -> enum is Enumeration } }.forEach { member ->
+        children.filter{ restriction -> restriction is Restriction }.flatMap { it.children.filter { enum -> enum is Enumeration } }.forEach { member ->
             classDef.append("$member\n")
         }
         classDef.setLength(classDef.length-2)

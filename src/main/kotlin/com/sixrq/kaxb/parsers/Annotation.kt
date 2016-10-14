@@ -1,3 +1,3 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 class Annotation(xmlns: String) : Tag(xmlns)

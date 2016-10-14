@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 class Schema(xmlns: String): Tag(xmlns) {
     override fun toString(): String{

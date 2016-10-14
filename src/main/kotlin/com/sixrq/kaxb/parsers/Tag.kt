@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 import org.w3c.dom.Node
 

@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 class Extension(xmlns: String, primitiveTypeMapping: MutableMap<String, String>) : Element(xmlns, primitiveTypeMapping) {
     init {

@@ -1,13 +1,12 @@
 package com.sixrq.kaxb
 
-import org.w3c.dom.Document
-import org.w3c.dom.Element
+import com.sixrq.kaxb.generators.DisplayGenerator
 import spock.lang.Specification
 
-class XmlParserTest extends Specification {
+class DisplayGeneratorTest extends Specification {
     def "I can parse an XML document"() {
         given: "an xml parser"
-        def parser = new XmlParser(this.getClass().getResource("/GpxExtensionsv3.xsd").toURI().getSchemeSpecificPart(), "com.sixrq.generated")
+        def parser = new DisplayGenerator(this.getClass().getResource("/GpxExtensionsv3.xsd").toURI().getSchemeSpecificPart(), "com.sixrq.generated")
 
         when: "I parse the document"
         parser.readAndDisplayDocument()

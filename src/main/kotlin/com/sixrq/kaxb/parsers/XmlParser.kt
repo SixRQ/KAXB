@@ -1,4 +1,4 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -18,7 +18,7 @@ class XmlParser(val filename: String, val packageName: String) {
     val primitiveTypeMapping: MutableMap<String, String> = hashMapOf()
 
 
-    fun readAndDisplayDocument() : Map<String, String> {
+    fun generate() : Map<String, String> {
         val elements = root.childNodes
         val schema = Schema(xmlns)
         val classes: MutableMap<String, String> = hashMapOf()
@@ -28,7 +28,6 @@ class XmlParser(val filename: String, val packageName: String) {
         classes.putAll(extractEnumerations(schema))
         classes.putAll(extractClasses(schema))
 
-        classes.entries.forEach { println(it) }
         return classes
     }
 
