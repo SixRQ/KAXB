@@ -18,21 +18,22 @@ class XmlParser(val filename: String, val packageName: String) {
     val primitiveTypeMapping: MutableMap<String, String> = hashMapOf()
 
 
-    fun generate() : Map<String, String> {
+    fun generate() : Map<String, Tag> {
         val elements = root.childNodes
         val schema = Schema(xmlns)
-        val classes: MutableMap<String, String> = hashMapOf()
+        val classes: MutableMap<String, Tag> = hashMapOf()
         processElements(schema, elements)
 
         primitiveTypeMapping.putAll(extractBasicTypes(schema))
         classes.putAll(extractEnumerations(schema))
         classes.putAll(extractClasses(schema))
+        classes.putAll(extractQNames(schema))
 
         return classes
     }
 
-    private fun extractEnumerations(schema: Schema) : Map<String, String> {
-        val classes: MutableMap<String, String> = hashMapOf()
+    private fun extractEnumerations(schema: Schema) : Map<String, Tag> {
+        val enumerations: MutableMap<String, Tag> = hashMapOf()
         schema.children.filter {
             it is SimpleType &&
                     it.children.filter {
@@ -40,15 +41,23 @@ class XmlParser(val filename: String, val packageName: String) {
                                 it.children.filter { it is Enumeration }.isNotEmpty()
                     }.isNotEmpty()
         }.forEach {
-            classes.put(it.name, it.toString())
+            enumerations.put(it.name, it)
         }
-        return classes
+        return enumerations
     }
 
-    private fun extractClasses(schema: Schema) : Map<String, String> {
-        val classes: MutableMap<String, String> = hashMapOf()
+    private fun extractQNames(schema: Schema) : Map<String, Tag> {
+        val qNames: MutableMap<String, Tag> = hashMapOf()
+        schema.children.filter { it is com.sixrq.kaxb.parsers.Element }.forEach {
+            qNames.put(it.name, it)
+        }
+        return qNames
+    }
+
+    private fun extractClasses(schema: Schema) : Map<String, Tag> {
+        val classes: MutableMap<String, Tag> = hashMapOf()
         schema.children.filter { it is ComplexType }.forEach {
-            classes.put(it.name, it.toString())
+            classes.put(it.name, it)
         }
         return classes
     }
