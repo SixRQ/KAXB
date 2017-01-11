@@ -11,7 +11,9 @@ open class Tag(val xmlns: String) {
     var value: String = ""
     var processContents: String = ""
     var base: String = ""
+    var schemaLocation: String = ""
     var imports: MutableList<String> = mutableListOf()
+    var includes: MutableList<String> = mutableListOf()
 
     val children: MutableList<Tag> = mutableListOf()
 
@@ -39,6 +41,9 @@ open class Tag(val xmlns: String) {
         }
         if (item.attributes.getNamedItem("base") != null) {
             base = item.attributes.getNamedItem("base").nodeValue
+        }
+        if (item.attributes.getNamedItem("schemaLocation") != null) {
+            schemaLocation = item.attributes.getNamedItem("schemaLocation").nodeValue
         }
     }
 

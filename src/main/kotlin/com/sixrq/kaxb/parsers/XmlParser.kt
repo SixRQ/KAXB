@@ -8,7 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class XmlParser(val filename: String, val packageName: String) {
     val root: Element by lazy {
-        val xmlFile = File(filename)
+        val xmlFile = File(ClassLoader.getSystemClassLoader().getResource("$filename").toURI().schemeSpecificPart)
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
         dBuilder.parse(xmlFile).documentElement
@@ -24,6 +24,10 @@ class XmlParser(val filename: String, val packageName: String) {
         val classes: MutableMap<String, Tag> = hashMapOf()
         processElements(schema, elements)
 
+        schema.includes.forEach {
+            val xmlParser = XmlParser(it, packageName)
+            classes.putAll(xmlParser.generate())
+        }
         primitiveTypeMapping.putAll(extractBasicTypes(schema))
         classes.putAll(extractEnumerations(schema))
         classes.putAll(extractClasses(schema))
@@ -89,13 +93,18 @@ class XmlParser(val filename: String, val packageName: String) {
                     "xsd:enumeration" -> Enumeration(xmlns)
                     "xsd:simpleContent" -> SimpleContent(xmlns)
                     "xsd:attribute" -> Attribute(xmlns, primitiveTypeMapping)
+                    "xsd:include" -> Include(xmlns)
                     else -> Tag(xmlns)
                 }
             }.invoke()
             if (item.hasAttributes() || item.hasChildNodes()) {
                 childTag.processAttributes(item)
                 processElements(childTag, item.childNodes)
-                tag.children.add(childTag)
+                if (childTag is Include) {
+                    tag.includes.add(childTag.schemaLocation)
+                } else {
+                    tag.children.add(childTag)
+                }
             }
             if (item.nodeType == Node.TEXT_NODE) {
                 tag.processText(item)

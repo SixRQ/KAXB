@@ -5,7 +5,7 @@ import spock.lang.Specification
 class DisplayGeneratorTest extends Specification {
     def "I can parse an XML document"() {
         given: "a Display Generator"
-        def parser = new DisplayGenerator(this.getClass().getResource("/GpxExtensionsv3.xsd").toURI().getSchemeSpecificPart(), "com.sixrq.generated")
+        def parser = new DisplayGenerator("GpxExtensionsv3.xsd", "com.sixrq.generated")
 
         when: "I parse the document"
         parser.readAndDisplayDocument()

@@ -8,7 +8,7 @@ class ClassFileGeneratorRunner extends Specification {
 
     def "I can parse an xml document and generate class files"() {
         given: "a ClassFileGenerator"
-        def generator = new ClassFileGenerator(this.getClass().getResource("/GpxExtensionsv3.xsd").toURI().getSchemeSpecificPart(), "com.sixrq.gpx", "generated")
+        def generator = new ClassFileGenerator("GpxExtensionsv3.xsd", "com.sixrq.gpx", "generated")
 
         when: "the files are generated"
         generator.generateClasses()
