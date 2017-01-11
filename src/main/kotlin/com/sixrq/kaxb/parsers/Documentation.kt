@@ -1,10 +1,8 @@
-package com.sixrq.kaxb
+package com.sixrq.kaxb.parsers
 
 import org.w3c.dom.Node
 
-class Documentation : Tag() {
-    var value = ""
-
+class Documentation(xmlns: String) : Tag(xmlns) {
     override fun processText(item: Node) {
         value = item.nodeValue
     }

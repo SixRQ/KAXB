@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  elementFormDefault="qualified"
+  xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation><xsd:documentation>
+  This schema defines the Garmin extensions to be used with the GPX 1.1 schema.
+  The root elements defined by this schema are intended to be used as child
+  elements of the "extensions" elements in the GPX 1.1 schema. The GPX 1.1
+  schema is available at http://www.topografix.com/GPX/1/1/gpx.xsd.
+  </xsd:documentation></xsd:annotation>
+
+  <xsd:complexType name="Categories_t">
+    <xsd:annotation><xsd:documentation>
+    This type contains a list of categories to which a waypoint has been assigned.
+    Note that this list may contain categories which do not exist for a particular
+    application installation.
+    </xsd:documentation></xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Category" type="xsd:string" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+</xsd:schema>

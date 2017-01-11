@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  elementFormDefault="qualified"
+  xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:complexType name="ComplexType">
+    <xsd:sequence>
+      <xsd:element name="simpleDouble" type="SimpleDouble"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="SimpleDouble">
+    <xsd:restriction base="xsd:double"/>
+  </xsd:simpleType>
+
+</xsd:schema>

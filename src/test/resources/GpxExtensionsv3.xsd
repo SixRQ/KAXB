@@ -4,6 +4,8 @@
   xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
+  <xsd:include schemaLocation="GpxExtensionsv3Include.xsd"/>
+
   <xsd:annotation><xsd:documentation>
   This schema defines the Garmin extensions to be used with the GPX 1.1 schema.
   The root elements defined by this schema are intended to be used as child
@@ -35,17 +37,6 @@
       <xsd:element name="Address" type="Address_t" minOccurs="0"/>
       <xsd:element name="PhoneNumber" type="PhoneNumber_t" minOccurs="0" maxOccurs="unbounded"/>
       <xsd:element name="Extensions" type="Extensions_t" minOccurs="0"/>
-    </xsd:sequence>
-  </xsd:complexType>
-
-  <xsd:complexType name="Categories_t">
-    <xsd:annotation><xsd:documentation>
-    This type contains a list of categories to which a waypoint has been assigned.
-    Note that this list may contain categories which do not exist for a particular
-    application installation.
-    </xsd:documentation></xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="Category" type="xsd:string" maxOccurs="unbounded" />
     </xsd:sequence>
   </xsd:complexType>
 
