@@ -3,11 +3,12 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
+        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
         maven { url 'http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release' }
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M04"
     }
 }
 
@@ -16,12 +17,13 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 
 repositories {
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
     maven { url 'http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release' }
     mavenCentral()
 }
 
 dependencies {
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.0.2'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.1-M04'
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.3.11'
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.7.4'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.0-groovy-2.4'
