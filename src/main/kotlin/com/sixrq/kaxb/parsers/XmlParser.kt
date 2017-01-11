@@ -8,13 +8,12 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class XmlParser(val filename: String, val packageName: String) {
     val root: Element by lazy {
-        val xmlFile = File(ClassLoader.getSystemClassLoader().getResource("$filename").toURI().schemeSpecificPart)
+        val xmlFile = File(ClassLoader.getSystemClassLoader().getResource(filename).toURI().schemeSpecificPart)
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
         dBuilder.parse(xmlFile).documentElement
     }
     val xmlns: String by lazy { root.getAttribute("xmlns") }
-    val xsdns: String by lazy { root.getAttribute("xmlns:xsd") }
     val primitiveTypeMapping: MutableMap<String, String> = hashMapOf()
 
 
