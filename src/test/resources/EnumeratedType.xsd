@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  elementFormDefault="qualified"
+  xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:simpleType name="Enumeration">dType
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="Enum1"/>
+      <xsd:enumeration value="Enum2"/>
+      <xsd:enumeration value="Enum3"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>
