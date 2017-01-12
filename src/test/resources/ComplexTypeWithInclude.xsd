@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  elementFormDefault="qualified"
+  xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:include schemaLocation="StandAloneComplexType.xsd"/>
+
+  <xsd:complexType name="IncludeComplexType">
+    <xsd:annotation><xsd:documentation>
+    A sample complex type for testing
+    </xsd:documentation></xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="stringToken" type="xsd:token" minOccurs="0"/>
+      <xsd:element name="standAloneComplexType" type="StandAloneComplexType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

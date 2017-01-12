@@ -1,7 +1,9 @@
 package com.sixrq.kaxb.generators
 
+import org.junit.Ignore
 import spock.lang.Specification
 
+@Ignore
 class DisplayGeneratorTest extends Specification {
     def "I can parse an XML document"() {
         given: "a Display Generator"

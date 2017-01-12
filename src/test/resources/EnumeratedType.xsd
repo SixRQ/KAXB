@@ -4,12 +4,15 @@
   xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-  <xsd:complexType name="ComplexType">
+  <xsd:simpleType name="Enumeration">dType
     <xsd:annotation><xsd:documentation>
-    A sample complex type for testing
+      A sample enumerated type for testing
     </xsd:documentation></xsd:annotation>
-    <xsd:sequence>
-      <xsd:element name="stringToken" type="xsd:token" minOccurs="0"/>
-    </xsd:sequence>
-  </xsd:complexType>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="Enum1"/>
+      <xsd:enumeration value="Enum2"/>
+      <xsd:enumeration value="Enum3"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
 </xsd:schema>
