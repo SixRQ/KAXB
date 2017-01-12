@@ -59,6 +59,42 @@ class SchemaParsingTests extends Specification {
         classes.get("Enumeration").toString() == expectedEnumType
     }
 
+    def "A Complex Type with SimpleContent correctly generates an class"() {
+        given: "A schema file with an enumerated simple type"
+        def parser = new XmlParser("ComplexTypeWithSimpleContent.xsd", "com.example")
+
+        when: "the classes are generated"
+        def classes = parser.generate()
+
+        then: "the class is correctly generated"
+        classes.get("Pair").toString() == expectedSimpleContent
+    }
+
+
+    def expectedSimpleContent = "com.example\n" +
+            "\n" +
+            "import javax.xml.bind.annotation.XmlAccessType\n" +
+            "import javax.xml.bind.annotation.XmlAccessorType\n" +
+            "import javax.xml.bind.annotation.XmlType\n" +
+            "import javax.xml.bind.annotation.XmlValue\n" +
+            "import javax.xml.bind.annotation.XmlJavaTypeAdapter\n" +
+            "import javax.xml.bind.annotation.XmlSchemaType\n" +
+            "\n" +
+            "@XmlAccessorType(XmlAccessType.FIELD)\n" +
+            "@XmlType(name = \"Pair\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
+            "    \"value\"\n" +
+            "))\n" +
+            "data class Pair {\n" +
+            "    @XmlValue\n" +
+            "    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)\n" +
+            "    @XmlSchemaType(\"token\")\n" +
+            "    lateinit var value : String\n" +
+            "    @XmlValue\n" +
+            "    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)\n" +
+            "    @XmlSchemaType(\"token\")\n" +
+            "    lateinit var name : String\n" +
+            "\n" +
+            "}\n"
 
     def expectedIncludeComplexType = "com.example\n" +
             "\n" +
