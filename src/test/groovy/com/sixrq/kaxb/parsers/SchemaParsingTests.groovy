@@ -59,6 +59,17 @@ class SchemaParsingTests extends Specification {
         classes.get("Enumeration").toString() == expectedEnumType
     }
 
+    def "A Complex Type with an Any tag correctly generates an enum"() {
+        given: "A schema file with an enumerated simple type"
+        def parser = new XmlParser("ComplexTypeWithAny.xsd", "com.example")
+
+        when: "the classes are generated"
+        def classes = parser.generate()
+
+        then: "the class is correctly generated"
+        classes.get("AnyType").toString() == expectedAnyType
+    }
+
     def "A Complex Type with SimpleContent correctly generates an class"() {
         given: "A schema file with an enumerated simple type"
         def parser = new XmlParser("ComplexTypeWithSimpleContent.xsd", "com.example")
@@ -70,6 +81,28 @@ class SchemaParsingTests extends Specification {
         classes.get("Pair").toString() == expectedSimpleContent
     }
 
+
+
+    def expectedAnyType = "com.example\n" +
+            "\n" +
+            "import javax.xml.bind.annotation.XmlAccessType\n" +
+            "import javax.xml.bind.annotation.XmlAccessorType\n" +
+            "import javax.xml.bind.annotation.XmlType\n" +
+            "import javax.xml.bind.annotation.XmlAnyElement\n" +
+            "\n" +
+            "/**\n" +
+            "* This type provides the ability to extend any data type that includes it.\n" +
+            "*/\n" +
+            "\n" +
+            "\n" +
+            "@XmlAccessorType(XmlAccessType.FIELD)\n" +
+            "@XmlType(name = \"AnyType\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
+            "    \"any\"\n" +
+            "))\n" +
+            "data class AnyType {\n" +
+            "    @XmlAnyElement(lax = true)\n" +
+            "    var any : MutableList<Any> = mutableListOf()\n" +
+            "}\n"
 
     def expectedSimpleContent = "com.example\n" +
             "\n" +
@@ -130,6 +163,13 @@ class SchemaParsingTests extends Specification {
             "import javax.xml.bind.annotation.XmlEnumValue\n" +
             "import javax.xml.bind.annotation.XmlType\n" +
             "\n" +
+            "/**\n" +
+            "* \n" +
+            "*      A sample enumerated type for testing\n" +
+            "*    \n" +
+            "*/\n" +
+            "\n" +
+            "\n" +
             "@XmlType(name = \"Enumeration\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
             "@XmlEnum\n" +
             "enum class Enumeration(val value : String ) {\n" +
@@ -161,7 +201,7 @@ class SchemaParsingTests extends Specification {
             "    var simpleDouble : MutableList<Double> = mutableListOf()\n" +
             "}\n"
 
-    def expectedSimpleType= "com.example\n" +
+    def expectedSimpleType = "com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +

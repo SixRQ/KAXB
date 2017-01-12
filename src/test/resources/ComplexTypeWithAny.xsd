@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  elementFormDefault="qualified"
+  xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:complexType name="AnyType">
+    <xsd:annotation>
+    <xsd:documentation>This type provides the ability to extend any data type that includes it.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+    <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+</xsd:schema>

@@ -5,6 +5,9 @@
   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
   <xsd:simpleType name="Enumeration">dType
+    <xsd:annotation><xsd:documentation>
+      A sample enumerated type for testing
+    </xsd:documentation></xsd:annotation>
     <xsd:restriction base="xsd:token">
       <xsd:enumeration value="Enum1"/>
       <xsd:enumeration value="Enum2"/>
