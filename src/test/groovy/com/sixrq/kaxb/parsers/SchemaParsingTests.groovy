@@ -30,6 +30,18 @@ class SchemaParsingTests extends Specification {
         classes.get("StandAloneComplexType").toString() == expectedStandAloneComplexType
     }
 
+    def "A Complex Type with a String field and QName correctly generates a class"() {
+        given: "A schema file with a single complex type containing a token type"
+        def parser = new XmlParser("QName.xsd", "com.example")
+
+        when: "the classes are generated"
+        def classes = parser.generate()
+
+        then: "the class is correctly generated"
+        classes.get("StandAloneComplexType").toString() == expectedStandAloneComplexType
+        classes.get("QNameEntry").toString() == expectedQNameEntry
+    }
+
     def "A Complex Type with Simple Type elements correctly generates a class"() {
         given: "A schema file with a single complex type containing a simple type"
         def parser = new XmlParser("SimpleType.xsd", "com.example")
@@ -257,4 +269,7 @@ class SchemaParsingTests extends Specification {
             "    @XmlSchemaType(\"token\")\n" +
             "    lateinit var stringToken : String\n" +
             "}\n"
+
+    def expectedQNameEntry = "    @XmlElement(name = \"QNameEntry\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
+            "    lateinit var qNameEntry : StandAloneComplexType"
 }
