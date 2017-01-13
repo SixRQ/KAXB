@@ -24,7 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class XmlParser(val filename: String, val packageName: String) {
     val root: Element by lazy {
-        val xmlFile = File(ClassLoader.getSystemClassLoader().getResource(filename).toURI().schemeSpecificPart)
+        val resource = ClassLoader.getSystemClassLoader().getResource(filename)
+        val xmlFile = if (resource == null) File(filename) else File(resource.toURI().schemeSpecificPart)
         val dbFactory = DocumentBuilderFactory.newInstance()
         val dBuilder = dbFactory.newDocumentBuilder()
         dBuilder.parse(xmlFile).documentElement
