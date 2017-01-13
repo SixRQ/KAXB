@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <xsd:schema targetNamespace="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
   elementFormDefault="qualified"
   xmlns="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
