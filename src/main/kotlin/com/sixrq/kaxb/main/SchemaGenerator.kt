@@ -1,5 +1,5 @@
 /*
- *    Copyright 2017 Simon Wiehe
+ *    Copyright 2017 SixRQ Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,10 +16,41 @@
 
 package com.sixrq.kaxb.main
 
+import com.sixrq.kaxb.generators.ClassFileGenerator
+import java.lang.System.exit
+
 class SchemaGenerator {
     companion object {
         @JvmStatic fun main(args: Array<String>) {
-            // Main code to call ClassFileGenerator goes here
+            val schemaGenerator = SchemaGenerator()
+            exit(schemaGenerator.generate(args))
         }
+    }
+
+    fun generate(args: Array<String>): Int {
+        val validArgs = listOf("--P", "--S", "--T")
+        if (args.size != 6 ||
+                !validArgs.containsAll(args.filter { it.startsWith("--") } ) ||
+                !args.filter { it.startsWith("--") }.containsAll(validArgs)) {
+            println("Usage: SchemaGenerator --P <destination package> --S <schema file> --T <target directory>")
+            return 999
+        }
+
+        var packageName = ""
+        var schemaLocation = ""
+        var targetDirectory = ""
+
+        args.forEachIndexed { index, value ->
+            when {
+                value.toUpperCase() == "--P" -> packageName = args[index + 1]
+                value.toUpperCase() == "--S" -> schemaLocation = args[index + 1]
+                value.toUpperCase() == "--T" -> targetDirectory = args[index + 1]
+            }
+        }
+
+        val classFileGenerator = ClassFileGenerator(schemaLocation, packageName, targetDirectory)
+        classFileGenerator.generateClasses()
+
+        return 0
     }
 }

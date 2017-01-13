@@ -41,6 +41,7 @@ class ClassFileGeneratorTest extends Specification {
         files.contains("StandAloneComplexType.kt")
         expectedStandAloneComplexType == new File("${targetDirectory}/com/example/StandAloneComplexType.kt").text
         expectedSingleClassObjectFactory == new File("${targetDirectory}/com/example/ObjectFactory.kt").text
+        (new File("${System.getProperty("java.io.tmpdir")}/{$uuid}")).deleteDir()
     }
 
     def expectedStandAloneComplexType = "com.example\n" +
