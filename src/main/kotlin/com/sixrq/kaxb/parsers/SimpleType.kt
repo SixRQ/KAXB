@@ -33,7 +33,7 @@ class SimpleType(xmlns: String, val packageName: String) : Tag(xmlns) {
                     forEach { comment -> documentation.append("${comment.toString()}\n")}
         }
 
-        classDef.append("$packageName\n\n")
+        classDef.append("package $packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlEnum\n")
         classDef.append("import javax.xml.bind.annotation.XmlEnumValue\n")
         classDef.append("import javax.xml.bind.annotation.XmlType\n")

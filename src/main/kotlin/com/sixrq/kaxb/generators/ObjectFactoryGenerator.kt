@@ -32,7 +32,7 @@ class ObjectFactoryGenerator(val packageName: String) {
 
     fun gerenateObjectFactory(): String {
         val builder = StringBuilder()
-        builder.append("$packageName\n\n")
+        builder.append("package $packageName\n\n")
         builder.append("import javax.xml.bind.JAXBElement\n")
         builder.append("import javax.xml.bind.annotation.XmlElementDecl\n")
         builder.append("import javax.xml.bind.annotation.XmlRegistry\n")
