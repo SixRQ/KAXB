@@ -16,7 +16,6 @@
 
 package com.sixrq.kaxb.generators
 
-import org.junit.Ignore
 import spock.lang.Specification
 
 import static groovy.io.FileType.FILES
@@ -44,7 +43,7 @@ class ClassFileGeneratorTest extends Specification {
         (new File("${System.getProperty("java.io.tmpdir")}/{$uuid}")).deleteDir()
     }
 
-    def expectedStandAloneComplexType = "com.example\n" +
+    def expectedStandAloneComplexType = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -63,13 +62,13 @@ class ClassFileGeneratorTest extends Specification {
             "@XmlType(name = \"StandAloneComplexType\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
             "    \"stringToken\"\n" +
             "))\n" +
-            "data class StandAloneComplexType {\n" +
+            "class StandAloneComplexType {\n" +
             "    @XmlElement(name = \"StringToken\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
             "    @XmlSchemaType(\"token\")\n" +
             "    lateinit var stringToken : String\n" +
             "}\n"
 
-    def expectedSingleClassObjectFactory = "com.example\n" +
+    def expectedSingleClassObjectFactory = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.JAXBElement\n" +
             "import javax.xml.bind.annotation.XmlElementDecl\n" +

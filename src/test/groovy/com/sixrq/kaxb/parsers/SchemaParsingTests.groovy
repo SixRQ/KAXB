@@ -111,7 +111,7 @@ class SchemaParsingTests extends Specification {
 
 
 
-    def expectedAnyType = "com.example\n" +
+    def expectedAnyType = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -127,12 +127,12 @@ class SchemaParsingTests extends Specification {
             "@XmlType(name = \"AnyType\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
             "    \"any\"\n" +
             "))\n" +
-            "data class AnyType {\n" +
+            "class AnyType {\n" +
             "    @XmlAnyElement(lax = true)\n" +
             "    var any : MutableList<Any> = mutableListOf()\n" +
             "}\n"
 
-    def expectedSimpleContent = "com.example\n" +
+    def expectedSimpleContent = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -145,7 +145,7 @@ class SchemaParsingTests extends Specification {
             "@XmlType(name = \"Pair\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
             "    \"value\"\n" +
             "))\n" +
-            "data class Pair {\n" +
+            "class Pair {\n" +
             "    @XmlValue\n" +
             "    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)\n" +
             "    @XmlSchemaType(\"token\")\n" +
@@ -157,7 +157,7 @@ class SchemaParsingTests extends Specification {
             "\n" +
             "}\n"
 
-    def expectedIncludeComplexType = "com.example\n" +
+    def expectedIncludeComplexType = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -177,7 +177,7 @@ class SchemaParsingTests extends Specification {
             "    \"stringToken\",\n" +
             "    \"standAloneComplexType\"\n" +
             "))\n" +
-            "data class IncludeComplexType {\n" +
+            "class IncludeComplexType {\n" +
             "    @XmlElement(name = \"StringToken\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
             "    @XmlSchemaType(\"token\")\n" +
             "    lateinit var stringToken : String\n" +
@@ -185,7 +185,7 @@ class SchemaParsingTests extends Specification {
             "    lateinit var standAloneComplexType : StandAloneComplexType\n" +
             "}\n"
 
-    def expectedEnumType = "com.example\n" +
+    def expectedEnumType = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlEnum\n" +
             "import javax.xml.bind.annotation.XmlEnumValue\n" +
@@ -213,7 +213,7 @@ class SchemaParsingTests extends Specification {
             "    }\n" +
             "}\n"
 
-    def expectedSimpleTypeWithMaxOccurs = "com.example\n" +
+    def expectedSimpleTypeWithMaxOccurs = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -224,12 +224,12 @@ class SchemaParsingTests extends Specification {
             "@XmlType(name = \"ComplexType\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
             "    \"simpleDouble\"\n" +
             "))\n" +
-            "data class ComplexType {\n" +
+            "class ComplexType {\n" +
             "    @XmlElement(name = \"SimpleDouble\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
             "    var simpleDouble : MutableList<Double> = mutableListOf()\n" +
             "}\n"
 
-    def expectedSimpleType = "com.example\n" +
+    def expectedSimpleType = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -240,12 +240,12 @@ class SchemaParsingTests extends Specification {
             "@XmlType(name = \"ComplexType\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
             "    \"simpleDouble\"\n" +
             "))\n" +
-            "data class ComplexType {\n" +
+            "class ComplexType {\n" +
             "    @XmlElement(name = \"SimpleDouble\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
             "    var simpleDouble : Double\n" +
             "}\n"
 
-    def expectedStandAloneComplexType = "com.example\n" +
+    def expectedStandAloneComplexType = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.annotation.XmlAccessType\n" +
             "import javax.xml.bind.annotation.XmlAccessorType\n" +
@@ -264,7 +264,7 @@ class SchemaParsingTests extends Specification {
             "@XmlType(name = \"StandAloneComplexType\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\", propOrder = arrayOf(\n" +
             "    \"stringToken\"\n" +
             "))\n" +
-            "data class StandAloneComplexType {\n" +
+            "class StandAloneComplexType {\n" +
             "    @XmlElement(name = \"StringToken\", namespace = \"http://www.garmin.com/xmlschemas/GpxExtensions/v3\")\n" +
             "    @XmlSchemaType(\"token\")\n" +
             "    lateinit var stringToken : String\n" +

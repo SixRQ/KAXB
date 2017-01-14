@@ -49,7 +49,7 @@ class ObjectFactoryGeneratorTest extends Specification {
         objectFactory == expectedQNameObjectFactory
     }
 
-    def expectedQNameObjectFactory = "com.example\n" +
+    def expectedQNameObjectFactory = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.JAXBElement\n" +
             "import javax.xml.bind.annotation.XmlElementDecl\n" +
@@ -94,7 +94,7 @@ class ObjectFactoryGeneratorTest extends Specification {
             "\n" +
             "}\n"
 
-    def expectedSingleClassObjectFactory = "com.example\n" +
+    def expectedSingleClassObjectFactory = "package com.example\n" +
             "\n" +
             "import javax.xml.bind.JAXBElement\n" +
             "import javax.xml.bind.annotation.XmlElementDecl\n" +

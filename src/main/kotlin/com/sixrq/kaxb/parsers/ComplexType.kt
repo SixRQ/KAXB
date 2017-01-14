@@ -29,7 +29,7 @@ class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
 
         properties.addAll(children.filter{ propertyGroup -> propertyGroup is Sequence || propertyGroup is SimpleContent }.
                 flatMap { it.children.filter { element -> element is Element || element is AnyElement || element is Restriction } })
-        classDef.append("$packageName\n\n")
+        classDef.append("package $packageName\n\n")
         classDef.append("import javax.xml.bind.annotation.XmlAccessType\n")
         classDef.append("import javax.xml.bind.annotation.XmlAccessorType\n")
         classDef.append("import javax.xml.bind.annotation.XmlType\n")
@@ -48,7 +48,7 @@ class ComplexType(xmlns: String, val packageName: String): Tag(xmlns) {
         }
         classDef.setLength(classDef.length-2)
         classDef.append("\n))")
-        classDef.append("\ndata class $name ${appendType()}{\n")
+        classDef.append("\nclass $name ${appendType()}{\n")
         properties.forEach { property ->
             classDef.append("$property\n")
         }
