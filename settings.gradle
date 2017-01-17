@@ -16,3 +16,4 @@
 
 rootProject.name = 'kaxb'
 
+rootProject.buildFileName = 'build.gradle.kts'
