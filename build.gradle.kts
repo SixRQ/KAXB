@@ -1,3 +1,5 @@
+import org.gradle.jvm.tasks.Jar
+
 /*
  *    Copyright 2017 SixRQ Ltd.
  *
@@ -20,28 +22,34 @@ version = "1.0-SNAPSHOT"
 buildscript {
     repositories {
         maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap-1.1") }
-        maven { setUrl("http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release") }
-        mavenCentral()
+        maven { setUrl("http://repository.pentaho.org/artifactory/repo/groups.omni")}
+        gradleScriptKotlin()
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M04")
+        classpath(kotlinModule("gradle-plugin"))
+        classpath("com.github.jengelman.gradle.plugins:shadow:1.2.4")
     }
 }
 
+plugins {
+    application
+    groovy
+    java
+}
+
 apply {
-    plugin("groovy")
-    plugin("java")
     plugin("kotlin")
+    plugin("com.github.johnrengelman.shadow")
 }
 
 repositories {
     maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap-1.1") }
-    maven { setUrl("http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release") }
-    mavenCentral()
+    gradleScriptKotlin()
 }
 
 dependencies {
+    compile(kotlinModule("stdlib"))
     compile("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M04")
     compile("org.codehaus.groovy:groovy-all:2.3.11")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.7.4")
@@ -49,3 +57,13 @@ dependencies {
     testCompile("junit:junit:4.11")
 }
 
+configure<ApplicationPluginConvention> {
+    mainClassName = "com.sixrq.kaxb.main.SchemaGenerator"
+}
+
+val jar: Jar by tasks
+jar.apply {
+    manifest.attributes.apply {
+        put("Main-Class", "com.sixrq.kaxb.main.SchemaGenerator")
+    }
+}
