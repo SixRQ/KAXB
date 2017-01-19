@@ -4,7 +4,7 @@ This project is used to generate native Kotlin classes from an xsd schema, simil
 
 ## Build Status
 
-[![TeamCity]https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:OpenSourceProjects_Kaxb_Build)/statusIcon]
+[![TeamCity]()https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:OpenSourceProjects_Kaxb_Build)/statusIcon)](https://teamcity.jetbrains.com/project.html?projectId=OpenSourceProjects_Kaxb)
 
 ## Code Example
 
