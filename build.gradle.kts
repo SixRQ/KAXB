@@ -21,8 +21,8 @@ version = "1.0-SNAPSHOT"
 
 buildscript {
     repositories {
-        maven { setUrl("http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release") }
         gradleScriptKotlin()
+        jcenter()
     }
 
     dependencies {
@@ -44,8 +44,8 @@ apply {
 }
 
 repositories {
-    maven { setUrl("http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release") }
     gradleScriptKotlin()
+    jcenter()
 }
 
 dependencies {
