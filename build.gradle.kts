@@ -21,12 +21,12 @@ version = "1.0-SNAPSHOT"
 
 buildscript {
     repositories {
-        maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap-1.1") }
-        maven { setUrl("http://repository.pentaho.org/artifactory/repo/groups.omni")}
+        maven { setUrl("http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release") }
         gradleScriptKotlin()
     }
 
     dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
         classpath(kotlinModule("gradle-plugin"))
         classpath("com.github.jengelman.gradle.plugins:shadow:1.2.4")
     }
@@ -44,15 +44,15 @@ apply {
 }
 
 repositories {
-    maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap-1.1") }
+    maven { setUrl("http://sixrq.geekgalaxy.com:7073/artifactory/plugins-release") }
     gradleScriptKotlin()
 }
 
 dependencies {
-    compile(kotlinModule("stdlib"))
-    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M04")
+    compile(kotlin("stdlib"))
+    compile("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
     compile("org.codehaus.groovy:groovy-all:2.3.11")
-    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.7.4")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.2")
     testCompile("org.spockframework:spock-core:1.0-groovy-2.4")
     testCompile("junit:junit:4.11")
 }
